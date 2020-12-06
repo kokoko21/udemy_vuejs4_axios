@@ -1,20 +1,72 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h3>掲示板に投稿する</h3>
+    <label for="name">ニックネーム</label>
+    <input id="name" type="text">
+    <br><br>
+    <label for="comment">コメント：</label>
+    <textarea id="comment" v-model="comment"></textarea>
+    <br><br>
+    <button @click="createComment">コメントをサーバに送る</button>
+    <h2>掲示板</h2>
+    <div v-for="post in posts" :key="post.name">
+      <br>
+      <div>名前：{{post.fields.name.stringValue}}</div>
+      <div>コメント：{{post.fields.comment.stringValue}}</div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      name: "",
+      comment: "",
+      posts: []
+    };
+  },
+  created() { // リロード時
+    axios.get( // url, リクエスト
+      'https://firestore.googleapis.com/v1/projects/vuejs-axios-15c6b/databases/(default)/documents/comments'
+    )
+    .then(response => {
+      this.posts = response.data.documents;
+      console.log(response.data.documents);
+    });
+  },
+  methods: {
+    createComment() {
+      // データをサーバに送る（post）
+      axios.post( // url, 送るデータ
+        'https://firestore.googleapis.com/v1/projects/vuejs-axios-15c6b/databases/(default)/documents/comments',
+        {
+          fields: {
+            name: {
+              stringValue: this.name
+            },
+            comment: {
+              stringValue: this.comment
+            }
+          }
+        }
+      )
+      .then(response => { // axiosの処理が成功した時
+        console.log(response);
+      })
+      .catch(error => { // axiosの処理が失敗した時
+        console.log(error);
+      });
+      this.name = "";
+      this.comment = "";
+    }
   }
-}
+};
 </script>
+
+
 
 <style>
 #app {
