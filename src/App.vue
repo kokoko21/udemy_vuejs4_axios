@@ -30,7 +30,7 @@ export default {
   },
   created() { // リロード時
     axios.get( // url, リクエスト
-      'https://firestore.googleapis.com/v1/projects/vuejs-axios-15c6b/databases/(default)/documents/comments'
+      'https://firestore.googleapis.com/v1/projects/************/databases/(default)/documents/comments'
     )
     .then(response => {
       this.posts = response.data.documents;
@@ -41,7 +41,7 @@ export default {
     createComment() {
       // データをサーバに送る（post）
       axios.post( // url, 送るデータ
-        'https://firestore.googleapis.com/v1/projects/vuejs-axios-15c6b/databases/(default)/documents/comments',
+        'https://firestore.googleapis.com/v1/projects/*************/databases/(default)/documents/comments',
         {
           fields: {
             name: {
